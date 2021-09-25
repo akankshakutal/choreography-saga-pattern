@@ -33,6 +33,5 @@ services:
   product-service:
     build:
       context: ./product-service
-
     depends_on:
       - kafka

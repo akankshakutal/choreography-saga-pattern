@@ -4,12 +4,14 @@ lazy val productService = project
   .in(file("."))
   .settings(
     name := "product-service",
-    version := "0.1.0",
+    version := "0.1.0-SNAPSHOT",
     organization := "com.example",
     scalaVersion := scala3Version,
     libraryDependencies ++= Seq(
       Libs.zio,
       Libs.zioStream,
-      Libs.zioKafka
+      Libs.zioKafka,
+      Libs.zioConfig,
+      Libs.zioConfigTypesafe,
     )
   )

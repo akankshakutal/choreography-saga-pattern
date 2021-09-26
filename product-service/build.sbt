@@ -11,6 +11,7 @@ lazy val productService = project
       Libs.zio,
       Libs.zioStream,
       Libs.zioKafka,
+      Libs.zioJson,
       Libs.zioConfig,
       Libs.zioConfigTypesafe,
     )

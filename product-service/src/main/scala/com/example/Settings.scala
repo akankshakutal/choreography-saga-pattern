@@ -11,7 +11,13 @@ case class Topics(
     productAvailed: String,
     productAvailFailed: String
 )
-case class Settings(topics: Topics)
+
+case class KafkaSettings(
+    bootstrapServers: List[String],
+    consumerGroupIdPrefix: String
+)
+
+case class Settings(topics: Topics, kafkaSettings: KafkaSettings)
 
 object Settings {
   private val configDescr: ConfigDescriptor[Settings] =
@@ -26,7 +32,7 @@ object Settings {
     conf <- ZIO
       .fromEither(
         read(
-          configDescr from (argsSource <> defaultSource <> envSource)
+          configDescr from (argsSource <> envSource <> defaultSource)
         )
       )
       .mapError(_.prettyPrint('.'))

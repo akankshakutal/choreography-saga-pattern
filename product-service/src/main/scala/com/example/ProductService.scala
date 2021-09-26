@@ -9,6 +9,6 @@ object ProductService {
   def avail(items:List[OrderItem]) = ZIO.accessM[Has[ProductService]](_.get.avail(items))
 }
 
-class ProductService(){
+class ProductService() {
   def avail(items:List[OrderItem]):ZIO[Any, String, Unit] = ???
 }

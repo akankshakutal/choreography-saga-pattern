@@ -20,16 +20,18 @@ import com.example.consumers.AppConsumer
 import zio.ZIO
 import zio.Has
 import zio.ZLayer
+import com.example.producers.SuccessProducer
+import com.example.producers.FailureProducer
 
 class OrderStream(
     productService: ProductService,
     settings: Settings,
+    successProducer: SuccessProducer,
+    failureProducer: FailureProducer,
     clock: Clock.Service,
     consumer: Consumer,
-    console: zio.console.Console.Service,
+    console: zio.console.Console.Service
 ) {
-  private def sendFailureMessage(orderId: String): ZIO[Any, IOException, Unit] =
-    ???
   def stream() =
     consumer
       .subscribeAnd(Subscription.topics(settings.topics.orderPlaced))
@@ -43,22 +45,38 @@ class OrderStream(
             console.putStrErr(err.getMessage).as(offset)
           case Success(order) =>
             productService
+              //avail the product
               .avail(order.items.map(i => OrderItem(i.productId, i.quantity)))
-              .tapError(x => console.putStrLnErr(x))
-              //todo : when availaing fails,
+              // broadcast event
+              .tap(_ =>
+                successProducer.produce(order.orderId).mapError(_.getMessage)
+              )
+              //when availaing fails,
               //raise a failure event and move on
               //if that also fails, break the stream and let it restart by infra
-              .catchAll(_ => sendFailureMessage(order.orderId))
+              .tapError(x => console.putStrLnErr(x))
+              .catchAll(_ => failureProducer.produce(order.orderId).orDie)
               .as(offset)
         }
       }
       .aggregateAsync(Consumer.offsetBatches)
       .provideLayer(ZLayer.succeed(clock))
+      .run(ZSink.foreach(_.commit))
 }
 
 object OrderStream {
-  val live = ZStream.accessStream {(service:Has[OrderStream]) =>
-    service.get.stream()
-  }
-  .run(ZSink.foreach(_.commit))
+  val live: ZLayer[Has[
+    ProductService
+  ] & Has[Settings] & Has[Consumer] & Has[Clock.Service] & Has[SuccessProducer] & Has[FailureProducer] & Has[zio.console.Console.Service], Nothing, Has[
+    OrderStream
+  ]] = ZLayer.fromServices[
+    ProductService,
+    Settings,
+    SuccessProducer,
+    FailureProducer,
+    Clock.Service,
+    Consumer,
+    zio.console.Console.Service,
+    OrderStream
+  ](OrderStream(_, _, _, _, _, _, _))
 }

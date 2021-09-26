@@ -15,7 +15,6 @@ class FailureProducer(producer: Producer, settings: Settings) {
     producer
       .produce(record, Serde.string, ProductAvailFailed.serde)
       .map(x => x.offset)
-      .orDie
 }
 
 object FailureProducer {

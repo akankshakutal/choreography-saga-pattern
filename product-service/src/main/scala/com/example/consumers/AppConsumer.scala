@@ -4,15 +4,17 @@ package consumers
 import zio.*
 import zio.kafka.consumer.Consumer
 import zio.kafka.consumer.ConsumerSettings
+import zio.clock.Clock
+import zio.blocking.Blocking
 
 object AppConsumer {
-  def apply(groupId: String) =
-    ZLayer.fromServiceManaged { (settings: Has[Settings]) =>
+  def apply(groupId: String): ZLayer[Has[Clock.Service] & Has[Blocking.Service] & Has[Settings], Nothing, Has[Consumer]] =
+    ZLayer.fromServiceManaged { (settings: Settings) =>
       Consumer
         .make(
-          ConsumerSettings(settings.get.kafkaSettings.bootstrapServers)
+          ConsumerSettings(settings.kafkaSettings.bootstrapServers)
             .withGroupId(
-              settings.get.kafkaSettings.consumerGroupIdPrefix + groupId
+              settings.kafkaSettings.consumerGroupIdPrefix + groupId
             )
         )
     }.orDie

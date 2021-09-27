@@ -20,6 +20,7 @@ import com.example.consumers.AppConsumer
 import zio.ZIO
 import zio.Has
 import zio.ZLayer
+import zio.console.Console
 import com.example.producers.SuccessProducer
 import com.example.producers.FailureProducer
 
@@ -30,9 +31,9 @@ class OrderStream(
     failureProducer: FailureProducer,
     clock: Clock.Service,
     consumer: Consumer,
-    console: zio.console.Console.Service
+    console: Console.Service
 ) {
-  def stream() =
+  def stream =
     consumer
       .subscribeAnd(Subscription.topics(settings.topics.orderPlaced))
       .plainStream(Serde.string, OrderPlaced.serde.asTry)
@@ -79,4 +80,6 @@ object OrderStream {
     zio.console.Console.Service,
     OrderStream
   ](OrderStream(_, _, _, _, _, _, _))
+
+  def stream = ZIO.accessM[Has[OrderStream]](s => s.get.stream)
 }

@@ -20,6 +20,7 @@ import com.example.consumers.AppConsumer
 import zio.ZIO
 import zio.Has
 import zio.ZLayer
+import zio.console.*
 import zio.console.Console
 import com.example.producers.SuccessProducer
 import com.example.producers.FailureProducer
@@ -81,5 +82,7 @@ object OrderStream {
     OrderStream
   ](OrderStream(_, _, _, _, _, _, _))
 
-  def stream = ZIO.accessM[Has[OrderStream]](s => s.get.stream)
+  def stream = 
+    putStrLn("order stream started...") *>
+      ZIO.accessM[Has[OrderStream]](s => s.get.stream)
 }

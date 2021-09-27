@@ -30,6 +30,6 @@ object Application extends App {
 
   override def run(args: List[String]) =
     OrderStream.stream.orDie
-    .provideSomeLayer(dependencies(args))
+    .provideCustomLayer(dependencies(args))
     .exitCode
 }

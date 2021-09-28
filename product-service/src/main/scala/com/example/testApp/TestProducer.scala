@@ -6,6 +6,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import com.example.messages.OrderPlaced
 import zio.*
 import zio.console.*
+import zio.duration.*
 
 class TestProducer(producer: Producer, settings: Settings) {
   def produce(orderId: String) =
@@ -21,10 +22,15 @@ object TestProducer {
   def live =
     ZLayer.fromServices[Producer, Settings, TestProducer](TestProducer(_, _))
 
-  def produce(orderId: String) =
+  private def produce(orderId: String) =
     for {
-      _ <- putStrLn("producing...")
-      offset <- ZIO.accessM[Has[TestProducer]](_.get.produce(orderId))
-      _ <- putStrLn("produced")
-    } yield offset
+      _ <- putStrLn("producing test message...")
+      _ <- ZIO.accessM[Has[TestProducer]](_.get.produce(orderId))
+      _ <- putStrLn("produced test message")
+    } yield ()
+  
+  private def randomOrderId = zio.random.nextUUID.map(_.toString)
+  private def produceRandom = randomOrderId.flatMap(TestProducer.produce)  
+
+  def produceForever = produceRandom.repeat(Schedule.fixed(10.seconds))
 }

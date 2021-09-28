@@ -43,14 +43,17 @@ object Application extends App {
     val orderConsumerLayer =
       (consumerSettings ++ productService ++ successProducer ++ failureProducer ++ orderSubscription) >>> OrderConsumer.live
 
-    def randomOrderId = zio.random.nextUUID.map(_.toString)
-    def produceRandom = randomOrderId.flatMap(TestProducer.produce)
+    def isTest = args.headOption.fold(ZIO.succeed(false)){
+      case "--test" => ZIO.succeed(true)
+      case option => 
+        zio.console.putStrErr(s"invalid option: '$option'") *> 
+          ZIO.fail(RuntimeException(s"invalid option: '$option'"))
+    }
 
     val app = (for {
-      f <- produceRandom.repeat(Schedule.fixed(10.seconds)).fork
-      s <- OrderConsumer.consume
-      _ <- f.await
-    } yield s)
+      _ <- ZIO.ifM(isTest)(TestProducer.produceForever, ZIO.unit).fork
+      _ <- OrderConsumer.consume
+    } yield ())
 
     app
       .provideCustomLayer(testProducerLayer ++ orderConsumerLayer)

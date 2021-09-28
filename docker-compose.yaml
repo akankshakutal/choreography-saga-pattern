@@ -65,6 +65,7 @@ services:
       - 'cache:/root/.cache/'
     depends_on:
       - kafka
+      - mongo      
 
   payment-service:
     build:

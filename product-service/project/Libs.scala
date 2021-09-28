@@ -7,5 +7,5 @@ object Libs {
   lazy val zioJson = "dev.zio" %% "zio-json" % "0.2.0-M1"
   lazy val zioConfig = "dev.zio" %% "zio-config-magnolia" % "1.0.10"
   lazy val zioConfigTypesafe = "dev.zio" %% "zio-config-typesafe" % "1.0.10"
-
+  lazy val logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 }

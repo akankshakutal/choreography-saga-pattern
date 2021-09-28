@@ -14,5 +14,6 @@ lazy val productService = project
       Libs.zioJson,
       Libs.zioConfig,
       Libs.zioConfigTypesafe,
+      Libs.logback
     )
   )

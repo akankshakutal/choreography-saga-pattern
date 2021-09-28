@@ -1,6 +1,7 @@
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -9,6 +10,7 @@ services:
   
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka
     depends_on:
       - zookeeper
     ports:
@@ -24,6 +26,7 @@ services:
   
   kowl:
     image: quay.io/cloudhut/kowl:master-d782eab
+    container_name: kowl
     depends_on:
       - kafka
     ports:
@@ -34,5 +37,14 @@ services:
   product-service:
     build:
       context: ./product-service
+    container_name: product-service  
+    volumes:
+      - 'ivy2:/root/.ivy2/'
+      - 'coursierBin:/root/.local/share/coursier/'
+      - 'cache:/root/.cache/'
     depends_on:
       - kafka
+volumes:
+  coursierBin:
+  ivy2:
+  cache:

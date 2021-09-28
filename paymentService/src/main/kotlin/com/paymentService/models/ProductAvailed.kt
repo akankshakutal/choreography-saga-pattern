@@ -1,3 +1,3 @@
 package com.paymentService.models
 
-sealed class ProductAvailed(open val orderId: String)
+data class ProductAvailed(val orderId: String)

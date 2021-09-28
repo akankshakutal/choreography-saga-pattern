@@ -16,14 +16,18 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.4")
 	implementation("org.springframework.boot:spring-boot-starter-web:2.5.4")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.springframework.kafka:spring-kafka:2.7.6")
+
+	testImplementation("junit:junit:4.13.2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.4")
 	testImplementation("org.springframework.kafka:spring-kafka-test:2.7.6")
+	testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+	testImplementation("io.mockk:mockk:1.12.0")
 }
 
 tasks.withType<KotlinCompile> {

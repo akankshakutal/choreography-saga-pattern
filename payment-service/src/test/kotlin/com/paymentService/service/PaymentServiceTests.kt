@@ -19,7 +19,7 @@ class PaymentServiceTests {
 
     @Test
     internal fun `should produce event`() {
-        every { producer.produce(any(), any(),any()) } returns Unit
+        every { producer.produce(any(), any()) } returns Unit
         val response = PaymentResponse("SUCCESS", 1000)
         val paymentSucceedEvent = PaymentSucceedEvent("paymentId", "orderId")
         val paymentDetails = PaymentDetails("KOTAK1234", "display name", 1000, "orderId")
@@ -29,7 +29,7 @@ class PaymentServiceTests {
 
         paymentResponse shouldBe response
         verify(exactly = 1) {
-            producer.produce("",paymentSucceedEvent,any())
+            producer.produce("",paymentSucceedEvent)
         }
     }
 }

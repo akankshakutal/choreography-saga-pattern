@@ -1,3 +1,9 @@
 package com.paymentService.models
 
-data class PaymentSucceedEvent(val paymentId: String, val orderId: String)
+sealed class PaymentEvent(open val paymentId: String, open val orderId: String)
+
+data class PaymentSucceedEvent(override val paymentId: String, override val orderId: String) :
+    PaymentEvent(paymentId, orderId)
+
+data class PaymentFailedEvent(override val paymentId: String, override val orderId: String) :
+    PaymentEvent(paymentId, orderId)

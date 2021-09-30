@@ -1,3 +1,3 @@
 package com.paymentService.models
 
-data class PaymentDetails(val accountNumber: String, val name: String, val amount: Int, val orderId: String)
+data class PaymentDetails(val accountNumber: Int, val name: String, val cvv: Int, val orderId: String)

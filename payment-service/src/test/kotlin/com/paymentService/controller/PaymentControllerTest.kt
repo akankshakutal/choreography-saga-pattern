@@ -24,9 +24,9 @@ class PaymentControllerTest(@Autowired private val mockMvc: MockMvc) {
 
     @Test
     fun `should save order details and return it with 200 ok`() {
-        val response = PaymentResponse("SUCCESS", 1000)
+        val response = PaymentResponse("SUCCESS", 1000.0)
         Mockito.`when`(paymentService.pay(any())).thenReturn(response)
-        val paymentDetails = PaymentDetails("KOTAK1234", "display name", 1000, "orderId")
+        val paymentDetails = PaymentDetails(1234567890, "display name", 1000, "orderId")
 
         val requestBuilder = MockMvcRequestBuilders
             .post("/make/payment")

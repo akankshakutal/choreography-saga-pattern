@@ -2,9 +2,7 @@ package com.paymentService.service
 
 import com.paymentService.kafka.KafkaConfig
 import com.paymentService.kafka.PaymentServiceEventProducer
-import com.paymentService.models.PaymentDetails
-import com.paymentService.models.PaymentFailedEvent
-import com.paymentService.models.PaymentSucceedEvent
+import com.paymentService.models.*
 import com.paymentService.repository.CustomerBankAccount
 import com.paymentService.repository.CustomerBankAccountRepository
 import com.paymentService.repository.Transaction
@@ -46,7 +44,3 @@ class PaymentService(
         return PaymentResponse(PaymentStatus.SUCCESS, transaction.amount)
     }
 }
-
-data class PaymentResponse(val status: PaymentStatus, val amount: Double)
-
-enum class PaymentStatus { SUCCESS, FAILED }

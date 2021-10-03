@@ -3,9 +3,9 @@ package com.paymentService.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.payment.paymentService.utils.any
 import com.paymentService.models.PaymentDetails
-import com.paymentService.service.PaymentResponse
+import com.paymentService.models.PaymentResponse
+import com.paymentService.models.PaymentStatus
 import com.paymentService.service.PaymentService
-import com.paymentService.service.PaymentStatus
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired

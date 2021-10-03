@@ -9,7 +9,7 @@ import kotlin.random.Random
 class PaymentServiceEventProducer(private val template: KafkaTemplate<Int, PaymentEvent>) {
 
     fun produce(topicName: String, message: PaymentEvent) {
-        template.send(topicName, Random(10000).nextInt(), message)
+        template.send(topicName, message)
     }
 }
 

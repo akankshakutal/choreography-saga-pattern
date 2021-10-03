@@ -31,7 +31,7 @@ internal class PaymentServiceTests {
     }
 
     @Test
-    internal fun `should return success response`() {
+    internal fun `should return success response for pay`() {
         val response = PaymentResponse(PaymentStatus.SUCCESS, 1000.0)
         val paymentSucceedEvent = PaymentSucceedEvent("123456", "orderId")
         val paymentDetails = PaymentDetails(accountNumber, name, cvv, "orderId")
@@ -65,5 +65,16 @@ internal class PaymentServiceTests {
         val paymentService = PaymentService(producer, customerBankAccountRepository, transactionsRepository)
 
         assertThrows<RuntimeException> { paymentService.pay(paymentDetails) }
+    }
+
+    @Test
+    internal fun `should return success response for add Account`() {
+        val response = AccountCreationResponse(AccountStatus.CREATED)
+        val accountDetails = AccountDetails("display name", 1234567890, 1000, 4500.0)
+        val paymentService = PaymentService(producer, customerBankAccountRepository, transactionsRepository)
+
+        val paymentResponse = paymentService.addAccount(accountDetails)
+
+        paymentResponse shouldBe response
     }
 }

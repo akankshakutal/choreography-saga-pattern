@@ -26,6 +26,17 @@ class PaymentService(
         else handleFailureCase(customerBankAccount, transaction)
     }
 
+    fun addAccount(accountDetails: AccountDetails): AccountCreationResponse {
+        val customerBankAccount = CustomerBankAccount(
+            name = accountDetails.name,
+            accountNumber = accountDetails.accountNumber,
+            cvv = accountDetails.cvv,
+            balance = accountDetails.balance
+        )
+        customerBankAccountRepository.save(customerBankAccount)
+        return AccountCreationResponse(AccountStatus.CREATED)
+    }
+
     private fun handleFailureCase(customerBankAccount: CustomerBankAccount, transaction: Transaction): PaymentResponse {
         producer.produce(
             KafkaConfig.paymentFailedTopicName,

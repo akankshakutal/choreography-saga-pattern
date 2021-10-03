@@ -1,12 +1,14 @@
 package com.paymentService.kafka
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Configuration
 
-@Configuration
-class KafkaConfig {
-    companion object {
-        @Value("spring.kafka.consumer.productService.topic")
-        const val productServiceTopicName: String = "ProductAvailed"
-    }
+object KafkaConfig {
+    @Value("spring.kafka.consumer.productService.topic")
+    const val productServiceTopicName: String = "ProductAvailed"
+
+    @Value("spring.kafka.producer.paymentSucceed.topic")
+    const val paymentSucceedTopicName: String = "PaymentSucceed"
+
+    @Value("spring.kafka.producer.paymentFailed.topic")
+    const val paymentFailedTopicName: String = "PaymentFailed"
 }

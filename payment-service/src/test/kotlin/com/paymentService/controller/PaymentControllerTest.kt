@@ -5,6 +5,7 @@ import com.payment.paymentService.utils.any
 import com.paymentService.models.PaymentDetails
 import com.paymentService.service.PaymentResponse
 import com.paymentService.service.PaymentService
+import com.paymentService.service.PaymentStatus
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +25,7 @@ class PaymentControllerTest(@Autowired private val mockMvc: MockMvc) {
 
     @Test
     fun `should save order details and return it with 200 ok`() {
-        val response = PaymentResponse("SUCCESS", 1000.0)
+        val response = PaymentResponse(PaymentStatus.SUCCESS, 1000.0)
         Mockito.`when`(paymentService.pay(any())).thenReturn(response)
         val paymentDetails = PaymentDetails(1234567890, "display name", 1000, "orderId")
 

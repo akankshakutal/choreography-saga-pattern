@@ -3,10 +3,7 @@ package com.paymentService.service
 import com.paymentService.kafka.KafkaConfig
 import com.paymentService.kafka.PaymentServiceEventProducer
 import com.paymentService.models.*
-import com.paymentService.repository.CustomerBankAccount
-import com.paymentService.repository.CustomerBankAccountRepository
-import com.paymentService.repository.Transaction
-import com.paymentService.repository.TransactionsRepository
+import com.paymentService.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -47,7 +44,9 @@ class PaymentService(
 
     private fun handleSuccessCase(customerBankAccount: CustomerBankAccount, transaction: Transaction): PaymentResponse {
         customerBankAccount.balance -= transaction.amount
+        transaction.status = TransactionStatus.SUCCESS
         customerBankAccountRepository.save(customerBankAccount)
+        transactionsRepository.save(transaction)
         producer.produce(
             KafkaConfig.paymentSucceedTopicName,
             PaymentSucceedEvent(customerBankAccount.id, transaction.orderId)

@@ -2,11 +2,9 @@ package com.paymentService.service
 
 import com.paymentService.kafka.PaymentServiceEventProducer
 import com.paymentService.models.*
-import com.paymentService.repository.CustomerBankAccount
-import com.paymentService.repository.CustomerBankAccountRepository
-import com.paymentService.repository.Transaction
+import com.paymentService.repository.*
 import com.paymentService.repository.TransactionStatus.PENDING
-import com.paymentService.repository.TransactionsRepository
+import com.paymentService.repository.TransactionStatus.SUCCESS
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -28,6 +26,7 @@ internal class PaymentServiceTests {
     }
     private val transactionsRepository = mockk<TransactionsRepository> {
         every { findByOrderId(any()) } returns Transaction("orderId", 1000.0, PENDING)
+        every { save(any()) } returns Transaction("orderId", 1000.0, SUCCESS)
     }
 
     @Test

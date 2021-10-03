@@ -7,10 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Transaction(val orderId: String, val amount: Double, var status: TransactionStatus) {
     @Id
     lateinit var id: String
+
+    var accountNumber: Int? = null
 }
 
 enum class TransactionStatus {
     PENDING,
     SUCCESS,
-    FAILED
+    FAILED,
+    ROLLBACK
 }

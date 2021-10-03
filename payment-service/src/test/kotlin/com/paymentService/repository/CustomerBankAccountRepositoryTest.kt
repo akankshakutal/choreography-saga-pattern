@@ -21,7 +21,7 @@ class CustomerBankAccountRepositoryTest {
     }
 
     @Test
-    internal fun `should return CustomerBankAccount`() {
+    internal fun `should return CustomerBankAccount based on account number and cvv`() {
         val accountNumber = 1234567890
         val cvv = 543
         val customerBankAccount = CustomerBankAccount("display name", accountNumber, cvv, 2400.0)
@@ -30,6 +30,20 @@ class CustomerBankAccountRepositoryTest {
         customerBankAccountRepository.save(customerBankAccount)
 
         val actual = customerBankAccountRepository.findByAccountNumberAndCvv(accountNumber, cvv)
+
+        actual shouldBe customerBankAccount
+    }
+
+    @Test
+    internal fun `should return CustomerBankAccount based on account number`() {
+        val accountNumber = 1234567890
+        val cvv = 543
+        val customerBankAccount = CustomerBankAccount("display name", accountNumber, cvv, 2400.0)
+            .apply { id = "123456" }
+
+        customerBankAccountRepository.save(customerBankAccount)
+
+        val actual = customerBankAccountRepository.findByAccountNumber(accountNumber)
 
         actual shouldBe customerBankAccount
     }

@@ -66,6 +66,16 @@ services:
     depends_on:
       - kafka
 
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - 9001:9001
+    container_name: payment-service
+    depends_on:
+      - kafka
+      - mongo
+
 volumes:
   coursierBin:
   ivy2:

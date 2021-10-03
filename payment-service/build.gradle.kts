@@ -29,6 +29,7 @@ dependencies {
 	testImplementation("org.springframework.kafka:spring-kafka-test:2.7.6")
 	testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 }
 
 tasks.withType<KotlinCompile> {

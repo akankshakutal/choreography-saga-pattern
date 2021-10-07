@@ -1,6 +1,5 @@
 package com.paymentService.service
 
-import com.paymentService.kafka.KafkaConfig
 import com.paymentService.kafka.KafkaConfig.paymentFailedTopicName
 import com.paymentService.kafka.KafkaConfig.paymentSucceedTopicName
 import com.paymentService.kafka.PaymentServiceEventProducer
@@ -17,6 +16,7 @@ class PaymentService(
     @Autowired private val transactionsRepository: TransactionsRepository
 ) {
 
+    @Throws(OrderNotFoundException::class, BankAccountNotFoundException::class)
     fun pay(paymentDetails: PaymentDetails): PaymentResponse {
         val customerBankAccount = customerBankAccount(paymentDetails.accountNumber, paymentDetails.cvv)
         val transaction = transaction(paymentDetails)

@@ -3,6 +3,8 @@ package com.paymentService.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.payment.paymentService.utils.any
 import com.paymentService.models.*
+import com.paymentService.service.BankAccountNotFoundException
+import com.paymentService.service.OrderNotFoundException
 import com.paymentService.service.PaymentService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -52,6 +54,41 @@ class PaymentControllerAdviceTest(@Autowired private val mockMvc: MockMvc) {
             .andExpect(MockMvcResultMatchers.status().is5xxServerError)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ERR-1"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Internal server error"))
+            .andReturn()
+    }
+
+    @Test
+    fun `should return error response for account not found`() {
+        Mockito.`when`(paymentService.pay(any())).thenThrow(BankAccountNotFoundException())
+        val paymentDetails = PaymentDetails(1234567890, "display name", 1000, "orderId")
+
+        val requestBuilder = MockMvcRequestBuilders
+            .post("/make/payment")
+            .content(ObjectMapper().writeValueAsString(paymentDetails))
+            .contentType(MediaType.APPLICATION_JSON)
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().is5xxServerError)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ERR-2"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bank Account Details not found"))
+            .andReturn()
+
+    }
+
+    @Test
+    fun `should return error response for transaction not found`() {
+        Mockito.`when`(paymentService.pay(any())).thenThrow(OrderNotFoundException())
+        val paymentDetails = PaymentDetails(1234567890, "display name", 1000, "orderId")
+
+        val requestBuilder = MockMvcRequestBuilders
+            .post("/make/payment")
+            .content(ObjectMapper().writeValueAsString(paymentDetails))
+            .contentType(MediaType.APPLICATION_JSON)
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().is5xxServerError)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ERR-2"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bank Account Details not found"))
             .andReturn()
     }
 

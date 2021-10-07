@@ -26,6 +26,6 @@ class PaymentControllerAdvice {
     @ExceptionHandler(OrderNotFoundException::class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleOrderNotFoundException(exception: BankAccountNotFoundException): PaymentErrorResponse {
-        return PaymentErrorResponse("ERR-2", "Bank Account Details not found")
+        return PaymentErrorResponse("ERR-3", "Transaction not found for given orderId")
     }
 }

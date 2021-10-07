@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.dao.EmptyResultDataAccessException
 
 internal class PaymentServiceTests {
     private val accountNumber = 1234567890
@@ -59,11 +60,21 @@ internal class PaymentServiceTests {
     @Test
     internal fun `should throw exception when customerBankAccountRepository does not have the account`() {
         every { customerBankAccountRepository.findByAccountNumberAndCvv(any(), any()) } throws
-                RuntimeException("Data not Found")
+                EmptyResultDataAccessException(1)
         val paymentDetails = PaymentDetails(accountNumber, name, cvv, "orderId")
         val paymentService = PaymentService(producer, customerBankAccountRepository, transactionsRepository)
 
-        assertThrows<RuntimeException> { paymentService.pay(paymentDetails) }
+        assertThrows<BankAccountNotFoundException> { paymentService.pay(paymentDetails) }
+    }
+
+    @Test
+    internal fun `should throw exception when transactionsRepository does not have the account`() {
+        every { transactionsRepository.findByOrderId(any()) } throws
+                EmptyResultDataAccessException(1)
+        val paymentDetails = PaymentDetails(accountNumber, name, cvv, "orderId")
+        val paymentService = PaymentService(producer, customerBankAccountRepository, transactionsRepository)
+
+        assertThrows<OrderNotFoundException> { paymentService.pay(paymentDetails) }
     }
 
     @Test

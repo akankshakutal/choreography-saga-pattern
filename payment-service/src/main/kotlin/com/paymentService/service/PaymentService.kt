@@ -1,6 +1,7 @@
 package com.paymentService.service
 
 import com.paymentService.kafka.KafkaConfig
+import com.paymentService.kafka.KafkaConfig.paymentFailedTopicName
 import com.paymentService.kafka.KafkaConfig.paymentSucceedTopicName
 import com.paymentService.kafka.PaymentServiceEventProducer
 import com.paymentService.models.*
@@ -36,28 +37,21 @@ class PaymentService(
         return AccountCreationResponse(AccountStatus.CREATED)
     }
 
-    private fun transaction(paymentDetails: PaymentDetails): Transaction {
-        return try {
-            transactionsRepository.findByOrderId(paymentDetails.orderId)
-        } catch (exception: EmptyResultDataAccessException) {
-            throw OrderNotFoundException()
-        }
+    private fun transaction(paymentDetails: PaymentDetails) = try {
+        transactionsRepository.findByOrderId(paymentDetails.orderId)
+    } catch (exception: EmptyResultDataAccessException) {
+        throw OrderNotFoundException()
     }
 
     private fun handleFailureCase(customerBankAccount: CustomerBankAccount, transaction: Transaction): PaymentResponse {
-        producer.produce(
-            KafkaConfig.paymentFailedTopicName,
-            PaymentFailedEvent(customerBankAccount.id, transaction.orderId)
-        )
+        producer.produce(paymentFailedTopicName, PaymentFailedEvent(customerBankAccount.id, transaction.orderId))
         return PaymentResponse(PaymentStatus.FAILED, transaction.amount)
     }
 
-    private fun customerBankAccount(accountNumber: Int, cvv: Int): CustomerBankAccount {
-        return try {
-            customerBankAccountRepository.findByAccountNumberAndCvv(accountNumber, cvv)
-        } catch (exception: EmptyResultDataAccessException) {
-            throw BankAccountNotFoundException()
-        }
+    private fun customerBankAccount(accountNumber: Int, cvv: Int) = try {
+        customerBankAccountRepository.findByAccountNumberAndCvv(accountNumber, cvv)
+    } catch (exception: EmptyResultDataAccessException) {
+        throw BankAccountNotFoundException()
     }
 
     private fun handleSuccessCase(customerBankAccount: CustomerBankAccount, transaction: Transaction): PaymentResponse {

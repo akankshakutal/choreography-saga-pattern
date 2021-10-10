@@ -1,5 +1,6 @@
 # Order Service
 => Sample cURL request for creating a new order
+
 curl --location --request POST 'http://localhost:9000/order/submit' \
 --header 'Content-Type: application/json' \
 --data-raw '{

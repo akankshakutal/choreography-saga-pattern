@@ -76,6 +76,16 @@ services:
       - kafka
       - mongo
 
+  order-service:
+    build:
+      context: ./order-service
+    ports:
+      - 9000:8080
+    container_name: order-service
+    depends_on:
+      - kafka
+      - mongo
+
 volumes:
   coursierBin:
   ivy2:

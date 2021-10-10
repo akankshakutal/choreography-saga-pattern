@@ -6,8 +6,8 @@ import org.springframework.kafka.annotation.EnableKafka
 
 @SpringBootApplication
 @EnableKafka
-class Orderservice2Application
+class OrderserviceApplication
 
 fun main(args: Array<String>) {
-	runApplication<Orderservice2Application>(*args)
+	runApplication<OrderserviceApplication>(*args)
 }

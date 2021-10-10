@@ -23,6 +23,7 @@ class KafkaConsumerConfig(
         val properties = hashMapOf<String, Any>()
         properties[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
         properties[ConsumerConfig.GROUP_ID_CONFIG] = "order-status-change-event-group"
+        properties[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
         return DefaultKafkaConsumerFactory(properties, StringDeserializer(), JsonDeserializer(OrderStatusChangeEvent::class.java))
     }
 

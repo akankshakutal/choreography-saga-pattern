@@ -4,6 +4,7 @@ import com.orderservice.models.AddressType
 import com.orderservice.models.Item
 import com.orderservice.models.Order
 import com.orderservice.models.OrderRequest
+import com.orderservice.models.OrderShippingAddressResponse
 import com.orderservice.models.OrderStatus
 import com.orderservice.models.OrderStatusChangeEvent
 import com.orderservice.models.OrderTotalAmountResponse
@@ -115,6 +116,18 @@ internal class OrderServiceTest {
     }
 
     @Test
+    fun `should return shippingAddress for order`() {
+        orderRepository.save(order).block()
+        val mono = OrderService(orderRepository, kafkaTemplate, "OrderPlaced").getOrderShippingAddress(order.orderId)
+        StepVerifier.create(mono)
+                .expectSubscription()
+                .consumeNextWith {
+                    it shouldBe OrderShippingAddressResponse(order.shippingAddress)
+                }
+                .verifyComplete()
+    }
+
+    @Test
     fun `should update status in DB when event received from ProductAvailed topic`() {
         orderRepository.save(order).block()
         val orderService = OrderService(orderRepository, kafkaTemplate, "OrderPlaced")
@@ -163,10 +176,10 @@ internal class OrderServiceTest {
     }
 
     @Test
-    fun `should update status in DB when event received from PaymentFailed topic`() {
+    fun `should update status in DB when event received from ShipmentDelivered topic`() {
         orderRepository.save(order).block()
         val orderService = OrderService(orderRepository, kafkaTemplate, "OrderPlaced")
-        val updateInDb = orderService.updateStatusInDB(OrderStatusChangeEvent("8d8b30e3-de52-4f1c-a71c-9905a8043dac"), "PaymentFailed")
+        val updateInDb = orderService.updateStatusInDB(OrderStatusChangeEvent("8d8b30e3-de52-4f1c-a71c-9905a8043dac"), "ShipmentDelivered")
 
         StepVerifier.create(updateInDb)
                 .expectSubscription()
@@ -175,7 +188,7 @@ internal class OrderServiceTest {
                 }
                 .verifyComplete()
         val updatedOrder = orderRepository.findById(order.orderId).block()!!
-        updatedOrder.status shouldBe OrderStatus.FAILED
+        updatedOrder.status shouldBe OrderStatus.COMPLETED
     }
 
     @Test

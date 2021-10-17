@@ -1,6 +1,7 @@
 package com.orderservice.service
 
 import com.orderservice.models.Order
+import com.orderservice.models.OrderShippingAddressResponse
 import com.orderservice.models.OrderStatus
 import com.orderservice.models.OrderStatusChangeEvent
 import com.orderservice.models.OrderTotalAmountResponse
@@ -28,6 +29,10 @@ class OrderService(
 
     fun getOrderTotalAmount(orderId: String): Mono<OrderTotalAmountResponse> {
         return orderRepository.findById(orderId).map { it.totalAmount }.map { OrderTotalAmountResponse(it) }
+    }
+
+    fun getOrderShippingAddress(orderId: String): Mono<OrderShippingAddressResponse> {
+        return orderRepository.findById(orderId).map { it.shippingAddress }.map { OrderShippingAddressResponse(it) }
     }
 
     private fun publishOnKafka(order: Order): Mono<SendResult<String, Order>> {
@@ -58,7 +63,7 @@ class OrderService(
                 "ProductAvailed" -> OrderStatus.IN_PROGRESS
                 "ProductAvailFailed" -> OrderStatus.FAILED
                 "PaymentSucceed" -> OrderStatus.IN_PROGRESS
-                "PaymentFailed" -> OrderStatus.FAILED
+                "ShipmentDelivered" -> OrderStatus.COMPLETED
                 else -> throw UnknownEventException("Cannot process event from topic $topic")
             }
         }

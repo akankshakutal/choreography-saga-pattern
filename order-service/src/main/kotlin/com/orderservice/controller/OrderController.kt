@@ -2,6 +2,7 @@ package com.orderservice.controller
 
 import com.orderservice.models.OrderRequest
 import com.orderservice.models.OrderResponse
+import com.orderservice.models.OrderShippingAddressResponse
 import com.orderservice.models.OrderTotalAmountResponse
 import com.orderservice.service.OrderService
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,17 +42,32 @@ class OrderController(
     }
 
     @GetMapping("/totalAmount/{orderId}")
-    fun getOrderTotalAmount(@PathVariable orderId: String): Mono<ResponseEntity<OrderTotalAmountResponse>> {
+    fun getOrderTotalAmount(@PathVariable(required = true) orderId: String): Mono<ResponseEntity<OrderTotalAmountResponse>> {
         return orderService.getOrderTotalAmount(orderId)
                 .map {
                     ResponseEntity.ok().body(it)
                 }
                 .switchIfEmpty(ResponseEntity.notFound().build<OrderTotalAmountResponse>().toMono())
                 .doOnSuccess {
-                    println("Sending Successfull Response - $it")
+                    println("Sending Successful Response - $it")
                 }
                 .doOnError {
                     println("Some Error Occurred in getting totalAmount for the order.Message - [${it.message}]")
+                }
+    }
+
+    @GetMapping("/shippingAddress/{orderId}")
+    fun getOrderShippingAddress(@PathVariable(required = true) orderId: String): Mono<ResponseEntity<OrderShippingAddressResponse>> {
+        return orderService.getOrderShippingAddress(orderId)
+                .map {
+                    ResponseEntity.ok().body(it)
+                }
+                .switchIfEmpty(ResponseEntity.notFound().build<OrderShippingAddressResponse>().toMono())
+                .doOnSuccess {
+                    println("Sending Successful Response - $it")
+                }
+                .doOnError {
+                    println("Some Error Occurred in getting shippingAddress for the order.Message - [${it.message}]")
                 }
     }
 }

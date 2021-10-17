@@ -4,6 +4,7 @@ import com.orderservice.models.AddressType
 import com.orderservice.models.Item
 import com.orderservice.models.Order
 import com.orderservice.models.OrderRequest
+import com.orderservice.models.OrderShippingAddressResponse
 import com.orderservice.models.OrderStatus
 import com.orderservice.models.OrderTotalAmountResponse
 import com.orderservice.models.ShippingAddress
@@ -110,11 +111,35 @@ internal class OrderControllerTest {
     }
 
     @Test
-    fun `should return 404 HTTP status when order not found`() {
+    fun `should return 404 HTTP status when order not found for totalAmount request`() {
         Mockito.`when`(orderService.getOrderTotalAmount(order.orderId)).thenReturn(Mono.empty())
         webTestClient
                 .get()
                 .uri("http://localhost:8080/order/totalAmount/8d8b30e3-de52-4f1c-a71c-9905a8043dac")
+                .exchange()
+                .expectStatus()
+                .isNotFound
+    }
+
+    @Test
+    fun `should return the shippingAddress for the order`() {
+        val orderShippingAddressResponse = OrderShippingAddressResponse(order.shippingAddress)
+        Mockito.`when`(orderService.getOrderShippingAddress(order.orderId)).thenReturn(Mono.just(orderShippingAddressResponse))
+        webTestClient
+                .get()
+                .uri("http://localhost:8080/order/shippingAddress/8d8b30e3-de52-4f1c-a71c-9905a8043dac")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody(OrderShippingAddressResponse::class.java)
+    }
+
+    @Test
+    fun `should return 404 HTTP status when order not found for shippingAddress request`() {
+        Mockito.`when`(orderService.getOrderShippingAddress(order.orderId)).thenReturn(Mono.empty())
+        webTestClient
+                .get()
+                .uri("http://localhost:8080/order/shippingAddress/8d8b30e3-de52-4f1c-a71c-9905a8043dac")
                 .exchange()
                 .expectStatus()
                 .isNotFound

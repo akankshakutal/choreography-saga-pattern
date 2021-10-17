@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
@@ -29,6 +30,7 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -36,11 +38,8 @@ import java.util.concurrent.TimeUnit
 @EmbeddedKafka(topics = ["ProductAvailed"], partitions = 1, brokerProperties = ["listeners=PLAINTEXT://localhost:9092", "port=9092"])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@TestPropertySource(properties = [
-    "kafka.consumer.topic.names=ProductAvailed"
-]
-)
 @Import(TestKafkaProducerConfig::class)
+@ActiveProfiles("test")
 internal class OrderStatusChangeEventConsumerIntegrationTest {
     @Autowired
     lateinit var embeddedKafkaBroker: EmbeddedKafkaBroker

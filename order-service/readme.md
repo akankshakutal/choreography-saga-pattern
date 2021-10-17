@@ -31,3 +31,10 @@ curl --location --request GET 'http://localhost:9000/order/totalAmount/a8c8e906-
 --header 'Content-Type: application/json' \
 --data-raw ''
 
+
+=> Sample cURL request to get shippingAddress for an orderId
+
+curl --location --request GET 'http://localhost:9000/order/shippingAddress/a8c8e906-c1c2-43b5-9421-b4dd75e5aa7a' \
+--header 'Content-Type: application/json' \
+--data-raw ''
+

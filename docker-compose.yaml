@@ -87,6 +87,15 @@ services:
       - kafka
       - mongo
 
+  # shipment-service:
+  #     build:
+  #       context: ./shipment-service/Shipment
+  #     ports:
+  #       - 9003:9003
+  #     container_name: shipment-service
+  #     depends_on:
+  #       - kafka
+  #       - mongo
 volumes:
   coursierBin:
   ivy2:

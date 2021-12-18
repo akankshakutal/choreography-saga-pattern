@@ -5,7 +5,7 @@ import zio.*
 import zio.json.*
 import zio.kafka.serde.Serde
 
-case class Item(productId: String, quantity: Int)
+case class Item(itemId: String, quantity: Int)
 object Item {
   given JsonCodec[Item] = DeriveJsonCodec.gen
 }

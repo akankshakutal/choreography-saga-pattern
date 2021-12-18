@@ -52,7 +52,7 @@ class OrderConsumer(
           ZIO.unit
         )
         _ <- productService
-          .avail(orderPlaced.items.map(i => OrderItem(i.productId, i.quantity)))
+          .avail(orderPlaced.items.map(i => OrderItem(i.itemId, i.quantity)))
           .tapError(x => putStrLnErr(x.getMessage))
           .orElse(failureProducer.produce(orderPlaced.orderId))
           .orDie
